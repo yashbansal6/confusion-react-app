@@ -7,7 +7,7 @@ const required= (val)=> val && val.length;
 const minLength= (len)=> (val)=> val && (val.length>=len);
 const maxLength= (len)=> (val)=> !(val) || (val.length<=len);
 
-class CommentForm extends React.Component{
+class CommentForm extends Component{
     constructor(props){
         super(props)
         this.state={
@@ -24,8 +24,7 @@ class CommentForm extends React.Component{
     }
 
     handleSubmit(val){
-        console.log("Current state is: "+JSON.stringify(val));
-        alert("Current state is: "+JSON.stringify(val));
+        this.props.addComment(this.props.dishId, val.rating, val.author, val.comment);
     }
 
     render(){
@@ -51,15 +50,15 @@ class CommentForm extends React.Component{
                                 </Col>
                             </Row>
                             <Row className="form-group">
-                                <Label htmlFor="name" md={12}>Your Name</Label>
+                                <Label htmlFor="author" md={12}>Your Name</Label>
                                 <Col md={12}>
-                                    <Control.text model=".name" name="name" placeholder="Your Name"
-                                    id="name" className="form-control"
+                                    <Control.text model=".author" name="author" placeholder="Your Name"
+                                    id="author" className="form-control"
                                     validators={{
                                         required, minLength: minLength(3), maxLength: maxLength(15)
                                     }}
                                     />
-                                    <Errors className="text-danger" model=".name" show="touched"
+                                    <Errors className="text-danger" model=".author" show="touched"
                                     messages={{
                                         required: 'Required ',
                                         minLength: "Must be greater than 2 characters",
@@ -90,7 +89,7 @@ class CommentForm extends React.Component{
     }
 }
 
-    function RenderComments({comments}) {
+    function RenderComments({comments, addComment, dishId}) {
         if (comments == null) {
             return (
                 <div></div>
@@ -112,11 +111,12 @@ class CommentForm extends React.Component{
             );
         });
         return (
-            <div>
+            <div className='col-12 col-md-5 m-1'>
                 <h4> Comments </h4>
                 <ul className='list-unstyled'>
                     {cmnts}
                 </ul>
+                <CommentForm dishId={dishId} addComment={addComment}/>
             </div>
         );
     }
@@ -151,10 +151,7 @@ class CommentForm extends React.Component{
                     </div>    
                     <div className="row">
                         <RenderDish dish={props.dish} />
-                        <div className='col-12 col-md-5 m-1'>
-                            <RenderComments comments={props.comments} />
-                            <CommentForm />
-                        </div>
+                        <RenderComments comments={props.comments} addComment={props.addComment} dishId={props.dish.id} />
                     </div>
                 </div>
             );
